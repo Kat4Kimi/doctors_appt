@@ -20,7 +20,7 @@ const Appointments = ({ patient, doctors }) => {
       <h2>Doctors</h2> 
       { doctors.map((d) => (
         <div>
-          <p>{displayDoc(d.doctor_id)}</p>
+          <p>{displayDoc(d.id)}</p>
           <a href={`/patients/${patient.id}/appointments/${d.id}`} data-method="delete">
             Delete
           </a>
