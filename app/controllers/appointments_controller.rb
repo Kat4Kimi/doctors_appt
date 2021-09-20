@@ -1,6 +1,9 @@
 class AppointmentsController < ApplicationController
+  before_action :set_patient
+
   def index
     @appointments = @patient.appointments
+
     render component: 'Appointments', props: { patient: @patient, appointments: @appointments }
   end
 
@@ -11,6 +14,7 @@ class AppointmentsController < ApplicationController
 
   def create
     @appointment = @patient.appointments.new(appointment_params)
+
     if @appointment.save
       redirect_to patient_appointment_path
     else
