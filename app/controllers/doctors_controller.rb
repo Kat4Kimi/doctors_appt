@@ -1,69 +1,59 @@
 class DoctorsController < ApplicationController
+  before_action :set_doctor, only: [ :show, :destroy ]
+  # before_action :set_doctor, only: null_session
+# end
   def index
-    @doctors = Doctor.all
+    @doctors = Doctor.all 
     render component: 'Doctors', props: { doctors: @doctors }
   end
 
+  def show
+    @doctor = Doctor.find(params[:id])
+    render component: 'Doctor', props: { doctor: @doctor, patients: @doctor.patients }
+  end
+
   def new
-    @doctor =Doctor.new
+    @doctor = Doctor.new
     render component: 'DoctorNew', props: { doctor: @doctor }
   end
 
   def create
     @doctor = Doctor.new(doctor_params)
 
-  if @doctor.save 
-    redirect_to root_path 
-    #  /*look at localhost3000.com/rails/info/route *
-  else
-    render component: 'DoctorNew', props: { doctor: @doctor }
+    if @doctor.save
+      redirect_to doctors_path
+    else
+      render component:'DoctorNew', props: { doctor: @doctor }
+    end
   end
-end
-
 
   def edit
-
-    @doctor =Doctor.find(params[:id])
-  render component: 'DoctorEdit', props: { doctor: @doctor }
+   @doctor = Doctor.find(params[:id])
+   render component: 'DoctorEdit', props: { doctor: @doctor }
   end
 
   def update
     @doctor = Doctor.find(params[:id])
-
-  if @doctor.update(doctor_params)
-    redirect_to root_path
-  else
-    render component: 'DoctorEdit', props: { doctor: @Doctor }
-  end
-end
-
-
-  def show
-    @patient = Doctor.find(params[:id])
-    render component: 'Doctor', props: { doctor: @DoctorEdit }
+    if @doctor.update(doctor_params)
+      redirect_to doctors_path
+    else
+      render component: 'DoctorEdit', props: { doctor: @doctor }
+    end
   end
 
-def destroy
-  @doctor = Doctor.find(params[:id])
-  @doctor.destroy
-  redirect_to root_path
+  def destroy
+    # @doctor = Doctor.find(params[:id])
+    @doctor.destroy
+    redirect_to doctors_path
+  end
 
-  # or 
-  # Sub.find(params[:id]).destroy
-  # redirect_to subs_path
-end
-
-private 
-  # def set_doctor
-
-   
+  private
   def doctor_params
-    params.require(:doctor).permit(:name)
-  end
+    params.require(:doctor).permit(:first_name, :last_name)
 
+  end
   def set_doctor
     @doctor = Doctor.find(params[:id])
   end
 end
-
 
