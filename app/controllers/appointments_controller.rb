@@ -3,42 +3,52 @@ class AppointmentsController < ApplicationController
 
   def index
     @appointments = @patient.appointments
-    render component: 'Appointments', props: { appoinments: @appointments, patient: @patient, doctors: Doctor.all }
-  end
 
-  def show
-    @appointment = @patient.appointments.find(params[:id])
-    render component: 'Appointment', props: { patient: @patient, appointment: @appointment, doctors: @doctors }
+    render component: 'Appointments', props: { patient: @patient, appointments: @appointments }
   end
 
   def new
-    @doctors = Doctor.all - @patient.doctors
-    @appointment = @patient.appointments.new
-    render component: "AppointmentNew", props: { patient: @patient, appointment: @appointment, doctors: @doctors }
+    @appointment = @patient.appointments.new(params[:id])
+    render component: 'Appointment', props: { patient: @patient, appointment: @appointment }
   end
 
   def create
     @appointment = @patient.appointments.new(appointment_params)
-    @doctors = Doctor.all - @patient.doctors
+
     if @appointment.save
-      redirect_to patient_appointments_path(@patient)
+      redirect_to patient_appointment_path
     else
-      render component: "AppointmentNew", props: { patient: @patient, appointment: @appointment, doctors: @doctors }
+      render component: 'AppointmentNew', props: {patient: @patient, appointment: @appointment }
     end
   end
 
-  def destroy
+  def edit
     @appointment = @patient.appointments.find(params[:id])
-    @appointment.destroy
-      redirect_to patient_appointments_path(@patient)
+    render component: 'AppointmentEdit', props: { patient: @patient, appointment: @appointment }
   end
 
- private
-   def set_patient
-     @patient = Patient.find(params[:patient_id]) 
-   end
+  def update
+    @appointment = @patient.appointments.find(params[:id])
+    if @appointment.update(appointment_params)
+      redirect_to patient_appointment_path
+    else
+      render component: 'AppointmentEdit', props: { patient: @patient, appointment: @appointment }
+    end
+  end
 
-   def appointment_params
-     params.require(:appointment).permit(:date, :time, :reason, :doctor_id)
-   end
+  def show
+    @appointment = @patient.appointment.find(params[:id])
+    render component: 'Appointment', props: { patient: @patient, appointment: @appointment }
+  end
 end
+
+  def destroy
+    @patient.appointments.find(params[:id]).destroy
+    redirect_to patient_appointment_path
+  end
+
+  private 
+    def set_patient
+      @patient = Patient.find(params[:patient_id])
+    end
+  end
