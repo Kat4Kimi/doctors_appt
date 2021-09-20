@@ -1,5 +1,4 @@
 class DoctorsController < ApplicationController
-  # before_action :set_store, only: [:show, :edit, :update, :destroy]
   def index
     @doctors = Doctor.all
     render component: 'Doctors', props: { doctors: @doctors }
@@ -12,6 +11,7 @@ class DoctorsController < ApplicationController
 
   def create
     @doctor = Doctor.new(doctor_params)
+
   if @doctor.save 
     redirect_to root_path 
     #  /*look at localhost3000.com/rails/info/route *
@@ -22,18 +22,21 @@ end
 
 
   def edit
+
     @doctor =Doctor.find(params[:id])
   render component: 'DoctorEdit', props: { doctor: @doctor }
   end
 
   def update
     @doctor = Doctor.find(params[:id])
+
   if @doctor.update(doctor_params)
     redirect_to root_path
   else
     render component: 'DoctorEdit', props: { doctor: @Doctor }
   end
 end
+
 
   def show
     @patient = Doctor.find(params[:id])
